@@ -17,7 +17,7 @@ endif
 ## docker-build: Build the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
 ##               defined it will be the git revision, plus ".dirty" suffix if
-##               the repository contains uncommitted files
+##               the repository contains uncommitted files.
 .PHONY: docker-build
 docker-build:
 ifneq (__GIT_UNCOMMITTED_FILES, "")
@@ -28,16 +28,18 @@ endif
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
 ##               defined it will be the git revision, plus ".dirty" suffix if
-##               the repository contains uncommitted files
+##               the repository contains uncommitted files.
+##               This command WON'T delete any intermediate images, so those
+##               should be manually removed.
 .PHONY: docker-clean
 docker-clean:
-	@docker rmi $(PROJECT_NAME):$(DOCKER_IMAGE_TAG)
+	@docker rmi $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) || true
 
 ## docker-run: Run a docker container from the image with the tag
 ##             <PROJECT_NAME>: <DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
 ##             defined it will be the git revision, plus ".dirty" suffix if the
 ##             repository contains uncommitted files. The container will be
-##             automatically removed once stopped
+##             automatically removed once stopped.
 .PHONY: docker-run
 docker-run: | docker-build
 	@docker run -it --rm $(PROJECT_NAME):$(DOCKER_IMAGE_TAG)
