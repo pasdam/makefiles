@@ -1,16 +1,16 @@
 # This makefile contains helper targets for go projects that are using go
-# modules (without vendoring).
+# modules (with vendoring).
 # If you use this file, you probably should also include go.mk.
 
 ## go-build: Build the app
 .PHONY: go-build
 go-build: | go-dep-clean go-dep-download
-	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) .
+	@go build -mod=vendor -v -o $(BUILD_DIR)/$(PROJECT_NAME) .
 
 ## go-dep-download: Download all the dependencies
 .PHONY: go-dep-download
 go-dep-download: | go-dep-clean
-	@go mod download
+	@go mod vendor
 
 ## go-dep-clean: Remove unused dependencies
 .PHONY: go-dep-clean

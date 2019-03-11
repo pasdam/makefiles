@@ -3,11 +3,6 @@
 
 GO_PKG_LIST := $(shell go list ./... | grep -v /vendor/)
 
-## go-build: Build the binary file
-.PHONY: go-build
-go-build:
-	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) .
-
 ## go-clean: Remove go build files
 .PHONY: go-clean
 go-clean:
