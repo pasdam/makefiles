@@ -11,7 +11,7 @@ go-clean:
 ## go-coverage: Generate global code coverage report
 .PHONY: go-coverage
 go-coverage:
-	@go test -v ${GO_PKG_LIST} -coverprofile /tmp/pls_cp.out
+	@go test -v ${GO_PKG_LIST} -coverprofile /tmp/pls_cp.out || true
 	@go tool cover -html=/tmp/pls_cp.out -o /tmp/coverage.html
 	@echo "You can find coverage report at /tmp/coverage.html"
 
