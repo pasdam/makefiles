@@ -9,7 +9,7 @@
 ## help: Display this help screen
 # TODO: write the target in a more elegant way
 .PHONY: help
-help: Makefile
+help:
 	@sed -n 's/^## //p' $(MAKEFILE_LIST) | awk '\
 		BEGIN { FS = "(:|^) +"}; \
 		/^[a-zA-Z0-9\-]+: .*/ { printf "\033[36m%-30s\033[0m%s\n", $$1, $$2; next }; \
