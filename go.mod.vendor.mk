@@ -1,6 +1,8 @@
 # This makefile contains helper targets for go projects that are using go
 # modules (with vendoring).
 # If you use this file, you probably should also include go.mk.
+# It expects the PROJECT_NAME variable to be defined, as it will be used as
+# name for the artifact.
 
 ## go-build: Build the app
 .PHONY: go-build
