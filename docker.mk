@@ -1,9 +1,13 @@
 # This makefile contains target related to docker.
-# It expects the PROJECT_NAME variable to be defined, as it will be used as
-# image name for all the commands.
+# PROJECT_NAME is used as image name for all the commands. By default it's 
+# assumed to be the name of the folder where the command is executed, to 
+# specify a different one just define the PROJECT_NAME variable in your main
+# makefile.
 # To use the automatically generated image's tag, the project must be in a git
 # repository, as the tag will be the sha of the latest commit, plus the suffix
 # ".dirty" if the repository contains uncommitted files.
+
+PROJECT_NAME ?= $(shell basename $(shell pwd))
 
 ifndef DOCKER_IMAGE_TAG
 __GIT_UNCOMMITTED_FILES := $(shell git status -s)
