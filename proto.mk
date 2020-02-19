@@ -8,6 +8,7 @@
 #	- PROTO_GO_OUT_DIR: output folder where generate the stubs and the reverse proxy for Go
 
 PROTO_GO_OUT_DIR ?= pkg/gen
+PROTOC_PARAMS ?=
 
 ## proto-clean: Remove all artifacts generated from proto
 .PHONY: proto-clean
@@ -17,12 +18,12 @@ proto-clean:
 ## proto-generate-gateway: Generates a reverse proxy for the GRPC service
 .PHONY: proto-generate-gateway
 proto-generate-gateway:
-	@protoc -I/usr/local/include -I$(PROTO_ROOT) --grpc-gateway_out=logtostderr=true,grpc_api_configuration=$(API_CONF_PATH):$(PROTO_GO_OUT_DIR) $(PROTO_PATH)
+	@protoc $(PROTOC_PARAMS) -I$(PROTO_ROOT) --grpc-gateway_out=logtostderr=true,grpc_api_configuration=$(API_CONF_PATH):$(PROTO_GO_OUT_DIR) $(PROTO_PATH)
 
 ## proto-generate-go-stub: Generates the (Go) server stubs from the proto
 .PHONY: proto-generate-go-stub
 proto-generate-go-stub:
-	@protoc -I/usr/local/include -I$(PROTO_ROOT) --go_out=plugins=grpc:$(PROTO_GO_OUT_DIR) $(PROTO_PATH)
+	@protoc $(PROTOC_PARAMS) -I$(PROTO_ROOT) --go_out=plugins=grpc:$(PROTO_GO_OUT_DIR) $(PROTO_PATH)
 
 ## proto-install-dep: Install the Go packages required to use the proto
 .PHONY: proto-install-dep
