@@ -9,12 +9,18 @@
 go-build: | go-dep-clean go-dep-download
 	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) .
 
+## go-dep-clean: Remove unused dependencies
+.PHONY: go-dep-clean
+go-dep-clean:
+	@go mod tidy
+
 ## go-dep-download: Download all the dependencies
 .PHONY: go-dep-download
 go-dep-download: | go-dep-clean
 	@go mod download
 
-## go-dep-clean: Remove unused dependencies
-.PHONY: go-dep-clean
-go-dep-clean:
-	@go mod tidy
+## go-dep-upgrade: Upgrade all the dependencies
+.PHONY: go-dep-upgrade
+go-dep-upgrade: | go-dep-clean
+	@go get -u ./...
+	@$(MAKE) go-dep-clean
