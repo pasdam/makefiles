@@ -4,10 +4,12 @@
 # It expects the PROJECT_NAME variable to be defined, as it will be used as
 # name for the artifact.
 
+GO_MAIN_DIR ?= .
+
 ## go-build: Build the app
 .PHONY: go-build
 go-build: | go-dep-clean go-dep-download
-	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) .
+	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) $(GO_MAIN_DIR)
 
 ## go-dep-clean: Remove unused dependencies
 .PHONY: go-dep-clean
