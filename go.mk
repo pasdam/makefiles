@@ -3,6 +3,8 @@
 # It also expects the PROJECT_NAME variable to be defined, as it will be used as
 # name for the artifact.
 
+GO_MAIN_DIR ?= .
+
 ## go-clean: Remove go build files
 .PHONY: go-clean
 go-clean:
@@ -21,6 +23,11 @@ go-check: | __go-pkg-list go-lint go-coverage
 	@go test -gcflags=-l -v -race -short ${GO_PKG_LIST}
 	@go test -gcflags=-l -v -msan -short ${GO_PKG_LIST}
 
+## go-install: Install the artifact
+.PHONY: go-install
+go-install:
+	@go install ${GO_MAIN_DIR}
+
 ## go-lint: Lint the files
 .PHONY: go-lint
 go-lint: | __go-pkg-list
@@ -29,7 +36,7 @@ go-lint: | __go-pkg-list
 ## go-run: Run the app locally
 .PHONY: go-run
 go-run:
-	@go run .
+	@go run ${GO_MAIN_DIR}
 
 ## go-test: Run unit tests
 .PHONY: go-test
