@@ -1,6 +1,6 @@
 # This makefile contains target related to docker.
-# PROJECT_NAME is used as image name for all the commands. By default it's 
-# assumed to be the name of the folder where the command is executed, to 
+# PROJECT_NAME is used as image name for all the commands. By default it's
+# assumed to be the name of the folder where the command is executed, to
 # specify a different one just define the PROJECT_NAME variable in your main
 # makefile.
 # To use the automatically generated image's tag, the project must be in a git
@@ -19,6 +19,7 @@ ifneq (__GIT_UNCOMMITTED_FILES, "")
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
 	@docker build --tag $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) .
+	@docker build --tag $(PROJECT_NAME):latest-local .
 
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
