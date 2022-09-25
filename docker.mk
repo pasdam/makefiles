@@ -8,6 +8,9 @@
 # ".dirty" if the repository contains uncommitted files.
 
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+DOCKER_PATH ?= .
+DOCKERFILE_NAME ?= Dockerfile
+DOCKERFILE_PATH ?= $(DOCKER_PATH)/$(DOCKERFILE_NAME)
 
 ## docker-build: Build the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
@@ -18,8 +21,8 @@ docker-build: | docker-generate-tag
 ifneq (__GIT_UNCOMMITTED_FILES, "")
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
-	@docker build --tag $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) .
-	@docker build --tag $(PROJECT_NAME):latest-local .
+	@docker build --tag $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+	@docker build --tag $(PROJECT_NAME):latest-local --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
 
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
