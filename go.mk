@@ -15,6 +15,7 @@ go-clean:
 go-coverage: | __go-pkg-list
 	@go test -gcflags=-l -v ${GO_PKG_LIST} -coverprofile /tmp/pls_cp.out
 	@go tool cover -html=/tmp/pls_cp.out -o /tmp/coverage.html
+	@go tool cover -func=/tmp/pls_cp.out
 	@echo "You can find coverage report at /tmp/coverage.html"
 
 ## go-check: Run linter, perform unit tests, and verify the coverage
