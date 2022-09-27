@@ -10,8 +10,14 @@
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 DOCKER_IMAGE_TAG ?=
 DOCKER_PATH ?= .
+DOCKER_REPO ?=
 DOCKERFILE_NAME ?= Dockerfile
 DOCKERFILE_PATH ?= $(DOCKER_PATH)/$(DOCKERFILE_NAME)
+ifneq ($(DOCKER_REPO),)
+DOCKER_IMAGE_NAME := $(DOCKER_REPO)/$(PROJECT_NAME)
+else
+DOCKER_IMAGE_NAME := $(PROJECT_NAME)
+endif
 
 ## docker-build: Build the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
@@ -22,8 +28,8 @@ docker-build: | docker-generate-tag
 ifneq (__GIT_UNCOMMITTED_FILES, "")
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
-	@docker build --tag $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
-	@docker build --tag $(PROJECT_NAME):latest-local --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+	@docker build --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+	@docker build --tag $(DOCKER_IMAGE_NAME):latest-local --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
 
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
