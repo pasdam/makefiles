@@ -29,7 +29,7 @@ ifneq ($(__GIT_UNCOMMITTED_FILES),)
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
 	@docker build --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
-	@docker build --tag $(DOCKER_IMAGE_NAME):latest-local --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+	@docker build --tag $(DOCKER_IMAGE_NAME):latest --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
 
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
