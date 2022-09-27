@@ -45,7 +45,7 @@ docker-run: | docker-generate-tag docker-build
 
 docker-generate-tag:
 	@$(eval __GIT_UNCOMMITTED_FILES := $(shell git status -s))
-	@$(eval DOCKER_IMAGE_TAG := $(shell git rev-parse --short HEAD 2> /dev/null))
+	@$(eval DOCKER_IMAGE_TAG ?= $(shell git rev-parse --short HEAD 2> /dev/null))
 
 	@if [ ! -z "$(__GIT_UNCOMMITTED_FILES)" ]; then \
 		echo "The repo has uncommitted files"; \
