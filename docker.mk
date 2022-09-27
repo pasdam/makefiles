@@ -25,7 +25,7 @@ endif
 ##               the repository contains uncommitted files.
 .PHONY: docker-build
 docker-build: | docker-generate-tag
-ifneq (__GIT_UNCOMMITTED_FILES, "")
+ifneq ($(__GIT_UNCOMMITTED_FILES),)
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
 	@docker build --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
