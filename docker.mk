@@ -10,6 +10,7 @@
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 DOCKER_IMAGE_TAG ?=
 DOCKER_PATH ?= .
+DOCKER_ENABLE_LATEST ?=
 DOCKER_REPO ?=
 DOCKERFILE_NAME ?= Dockerfile
 DOCKERFILE_PATH ?= $(DOCKER_PATH)/$(DOCKERFILE_NAME)
@@ -23,13 +24,17 @@ endif
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
 ##               defined it will be the git revision, plus ".dirty" suffix if
 ##               the repository contains uncommitted files.
+##               Set DOCKER_ENABLE_LATEST=true to tag the result image with
+##               "latest".
 .PHONY: docker-build
 docker-build: | docker-generate-tag
 ifneq ($(__GIT_UNCOMMITTED_FILES),)
 	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
 endif
 	@docker build --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+ifeq ($(DOCKER_ENABLE_LATEST), true)
 	@docker build --tag $(DOCKER_IMAGE_NAME):latest --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+endif
 
 ## docker-clean: Remove the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
