@@ -8,6 +8,7 @@
 # ".dirty" if the repository contains uncommitted files.
 
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+DIRTY_SUFFIX := .dirty
 DOCKER_IMAGE_TAG ?=
 DOCKER_PATH ?= .
 DOCKER_ENABLE_LATEST ?=
@@ -46,6 +47,21 @@ endif
 docker-clean: | docker-generate-tag
 	@docker rmi $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) || true
 
+## docker-push: Push the docker image with the tag
+##              <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
+##              defined it will be the git revision.
+##              Set DOCKER_ENABLE_LATEST=true to push the image with "latest"
+##              tag as well.
+.PHONY: docker-push
+docker-push: | docker-generate-tag
+ifeq ($(patsubst %$(DIRTY_SUFFIX),,$(lastword $(DOCKER_IMAGE_TAG))),)
+	$(error The image ${DOCKER_IMAGE_TAG} is only meant for local usage, unable to push it)
+endif
+	@docker push $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)
+ifeq ($(DOCKER_ENABLE_LATEST),true)
+	@docker push $(DOCKER_IMAGE_NAME):latest
+endif
+
 ## docker-run: Run a docker container from the image with the tag
 ##             <PROJECT_NAME>: <DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
 ##             defined it will be the git revision, plus ".dirty" suffix if the
@@ -62,7 +78,7 @@ ifeq ($(DOCKER_IMAGE_TAG),)
 
 	@if [ ! -z "$(__GIT_UNCOMMITTED_FILES)" ]; then \
 		echo "The repo has uncommitted files"; \
-		$(eval DOCKER_IMAGE_TAG := $(DOCKER_IMAGE_TAG).dirty) \
+		$(eval DOCKER_IMAGE_TAG := $(DOCKER_IMAGE_TAG)$(DIRTY_SUFFIX)) \
 	fi;
 	@echo "Image tag: "$(DOCKER_IMAGE_TAG)
 endif
