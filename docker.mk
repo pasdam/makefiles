@@ -8,6 +8,7 @@
 # ".dirty" if the repository contains uncommitted files.
 
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+DOCKER_IMAGE_TAG ?=
 DOCKER_PATH ?= .
 DOCKERFILE_NAME ?= Dockerfile
 DOCKERFILE_PATH ?= $(DOCKER_PATH)/$(DOCKERFILE_NAME)
@@ -44,11 +45,13 @@ docker-run: | docker-generate-tag docker-build
 	@docker run -it --rm $(PROJECT_NAME):$(DOCKER_IMAGE_TAG)
 
 docker-generate-tag:
+ifeq ($(DOCKER_IMAGE_TAG),)
 	@$(eval __GIT_UNCOMMITTED_FILES := $(shell git status -s))
-	@$(eval DOCKER_IMAGE_TAG ?= $(shell git rev-parse --short HEAD 2> /dev/null))
+	@$(eval DOCKER_IMAGE_TAG := $(shell git rev-parse --short HEAD 2> /dev/null))
 
 	@if [ ! -z "$(__GIT_UNCOMMITTED_FILES)" ]; then \
 		echo "The repo has uncommitted files"; \
 		$(eval DOCKER_IMAGE_TAG := $(DOCKER_IMAGE_TAG).dirty) \
 	fi;
 	@echo "Image tag: "$(DOCKER_IMAGE_TAG)
+endif
