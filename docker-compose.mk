@@ -1,6 +1,7 @@
 COMPOSE_TAGS_LOCAL_YAML ?= compose.local.yaml
 COMPOSE_FILES_ARGS ?= -f compose.yaml
 COMPOSE_LOCAL_MK ?= compose.local.mk
+COMPOSE_UP_ARGS ?= -d
 
 COMPOSE_FILES := $(shell echo $(COMPOSE_FILES_ARGS) | sed 's|-f ||g')
 
@@ -44,7 +45,7 @@ compose-generate-config-tags-target:
 ## compose-up: Start the docker compose environment
 .PHONY: compose-up
 compose-up: ${COMPOSE_TAGS_LOCAL_YAML} $(COMPOSE_LOCAL_MK)
-	@docker compose $(COMPOSE_FILES_ARGS) -f $(COMPOSE_TAGS_LOCAL_YAML) up -d
+	@docker compose $(COMPOSE_FILES_ARGS) -f $(COMPOSE_TAGS_LOCAL_YAML) up $(COMPOSE_UP_ARGS)
 
 # Internal targets
 # ================
