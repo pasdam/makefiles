@@ -7,7 +7,6 @@
 # "              <description: second line>"
 
 ## help: Display this help screen
-# TODO: write the target in a more elegant way
 .PHONY: help
 help:
 	@sed -n 's/^## //p' $(MAKEFILE_LIST) | awk '\
