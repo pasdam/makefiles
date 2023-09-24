@@ -27,6 +27,7 @@ compose-generate-config-tags:
 			while IFS= read -r volume; do \
 				case $$volume in ./*:ro) \
 					volume=$$(echo $$volume | sed "s|:.*||"); \
+					if [ ! -e "$$volume" ]; then echo "[WARNING] File $$volume does not exist"; continue; fi; \
 					volumeModificationSeconds=$$(date -r $$volume +%s); \
 					lastModificationSeconds=$$(( volumeModificationSeconds > lastModificationSeconds ? volumeModificationSeconds : lastModificationSeconds )); \
 				esac; \
