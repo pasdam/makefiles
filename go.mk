@@ -4,6 +4,7 @@
 # name for the artifact.
 
 GO_MAIN_DIR ?= .
+TEMP_DIR ?= /tmp
 
 ## go-clean: Remove go build files
 .PHONY: go-clean
@@ -13,10 +14,10 @@ go-clean:
 ## go-coverage: Generate global code coverage report
 .PHONY: go-coverage
 go-coverage: | __go-pkg-list
-	@go test -gcflags=-l -v ${GO_PKG_LIST} -coverprofile /tmp/pls_cp.out
-	@go tool cover -html=/tmp/pls_cp.out -o /tmp/coverage.html
-	@go tool cover -func=/tmp/pls_cp.out
-	@echo "You can find coverage report at /tmp/coverage.html"
+	@go test -gcflags=-l -v ${GO_PKG_LIST} -coverprofile $(TEMP_DIR)/pls_cp.out
+	@go tool cover -html=$(TEMP_DIR)/pls_cp.out -o $(TEMP_DIR)/coverage.html
+	@go tool cover -func=$(TEMP_DIR)/pls_cp.out
+	@echo "You can find coverage report at $(TEMP_DIR)/coverage.html"
 
 ## go-check: Run linter, perform unit tests, and verify the coverage
 .PHONY: go-check
