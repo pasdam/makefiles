@@ -40,9 +40,7 @@ compose-generate-config-tags:
 ##                                      calculate the last-modified-timestamp
 ##                                      tag for each container
 .PHONY: compose-generate-config-tags-target
-compose-generate-config-tags-target:
-	@deps=$$(cat $(COMPOSE_FILES) | grep -E '\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | tr '\n' ' ') && \
-		printf '$(COMPOSE_TAGS_LOCAL_YAML): %s\n	@$$(MAKE) compose-generate-config-tags\n' "$$deps" > $(COMPOSE_LOCAL_MK)
+compose-generate-config-tags-target: $(COMPOSE_LOCAL_MK)
 
 ## compose-up: Start the docker compose environment
 .PHONY: compose-up
@@ -52,10 +50,9 @@ compose-up: ${COMPOSE_TAGS_LOCAL_YAML}
 # Internal targets
 # ================
 
-${COMPOSE_TAGS_LOCAL_YAML}: $(COMPOSE_LOCAL_MK)
-
 # Generate the makefile with the target to calculate the last-modified-timestamp
 # tag for each container
 $(COMPOSE_LOCAL_MK): $(COMPOSE_FILES)
-	@1>&2 echo "Generating $(@)"
-	@$(MAKE) compose-generate-config-tags-target
+	@1>&2 echo "Generating the target to update the last-modified-timestamp tags for the compose services"
+	@deps=$$(cat $(COMPOSE_FILES) | grep -E '\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | sort | uniq | tr '\n' ' ') && \
+		printf '$(COMPOSE_TAGS_LOCAL_YAML): %s\n	@$$(MAKE) compose-generate-config-tags\n' "$$deps" > $(COMPOSE_LOCAL_MK)
