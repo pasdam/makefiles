@@ -71,6 +71,7 @@ endif
 docker-run: | docker-generate-tag docker-build
 	@docker run -it --rm $(PROJECT_NAME):$(DOCKER_IMAGE_TAG)
 
+.PHONY: docker-generate-tag
 docker-generate-tag:
 ifeq ($(DOCKER_IMAGE_TAG),)
 	@$(eval __GIT_UNCOMMITTED_FILES := $(shell git status -s))

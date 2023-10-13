@@ -1,3 +1,4 @@
+COMPOSE_DOWN_ARGS ?=
 COMPOSE_FILES ?= compose.yaml
 COMPOSE_LAST_MODIFIED_TAGS_YAML ?= compose.last-modified-tags.yaml
 COMPOSE_UP_ARGS ?= -d
@@ -9,7 +10,7 @@ COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
 ## compose-down: Stop the docker compose environment
 .PHONY: compose-down
 compose-down:
-	@docker compose $(COMPOSE_FILES_ARGS) down
+	@docker compose $(COMPOSE_FILES_ARGS) down $(COMPOSE_DOWN_ARGS)
 
 ## compose-generate-config-tags: Generate a compose file with tags for each
 ##                               service, with the timestamp of the last
