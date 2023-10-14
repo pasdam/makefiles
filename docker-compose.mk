@@ -7,6 +7,11 @@ COMPOSE_VOLUME_FILES ?= $(shell cat $(COMPOSE_FILES) | grep -E '\- \./.*:ro$$' |
 
 COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
 
+## compose-build: Build the docker images used in the compose files
+.PHONY: compose-build
+compose-build:
+	@docker compose $(COMPOSE_FILES_ARGS) build
+
 ## compose-down: Stop the docker compose environment
 .PHONY: compose-down
 compose-down:
