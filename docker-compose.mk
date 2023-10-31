@@ -3,13 +3,14 @@ COMPOSE_FILES ?= compose.yaml
 COMPOSE_LAST_MODIFIED_TAGS_YAML ?= compose.last-modified-tags.yaml
 COMPOSE_UP_ARGS ?= -d
 COMPOSE_UP_PREREQUISITES ?=
+COMPOSE_BUILD_PREREQUISITES ?= $(COMPOSE_UP_PREREQUISITES)
 COMPOSE_VOLUME_FILES ?= $(shell cat $(COMPOSE_FILES) | grep -E '\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | sort | uniq | tr '\n' ' ')
 
 COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
 
 ## compose-build: Build the docker images used in the compose files
 .PHONY: compose-build
-compose-build:
+compose-build: $(COMPOSE_BUILD_PREREQUISITES)
 	@docker compose $(COMPOSE_FILES_ARGS) build
 
 ## compose-down: Stop the docker compose environment
