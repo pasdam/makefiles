@@ -33,7 +33,7 @@ compose-up: $(COMPOSE_LAST_MODIFIED_TAGS_YAML) $(COMPOSE_VOLUME_FILES) $(COMPOSE
 # Internal targets
 # ================
 
-$(COMPOSE_LAST_MODIFIED_TAGS_YAML): $(COMPOSE_VOLUME_FILES)
+$(COMPOSE_LAST_MODIFIED_TAGS_YAML): $(COMPOSE_FILES) $(COMPOSE_VOLUME_FILES)
 	@1>&2 echo "Generating $@ because $? have changed"
 	@set -e; \
 		merged_compose=$$(yq eval-all '. as $$item ireduce ({}; . * $$item )' $(COMPOSE_FILES)); \
