@@ -14,6 +14,11 @@ COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
 compose-build: $(COMPOSE_BUILD_PREREQUISITES)
 	@docker compose $(COMPOSE_FILES_ARGS) build
 
+## compose-clean: Clean generated compose files
+.PHONY: compose-clean
+compose-clean:
+	@rm -f $(COMPOSE_LAST_MODIFIED_TAGS_YAML)
+
 ## compose-down: Stop the docker compose environment
 .PHONY: compose-down
 compose-down:
