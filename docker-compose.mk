@@ -4,7 +4,8 @@ COMPOSE_LAST_MODIFIED_TAGS_YAML ?= compose.last-modified-tags.yaml
 COMPOSE_UP_ARGS ?= -d
 COMPOSE_UP_PREREQUISITES ?=
 COMPOSE_BUILD_PREREQUISITES ?= $(COMPOSE_UP_PREREQUISITES)
-COMPOSE_VOLUME_FILES ?= $(shell cat $(COMPOSE_FILES) | grep -E '\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | sort | uniq | tr '\n' ' ')
+COMPOSE_FILES_WITH_VOLUMES :? $(COMPOSE_FILES)
+COMPOSE_VOLUME_FILES ?= $(shell cat $(COMPOSE_FILES_WITH_VOLUMES) | grep -E '^\s+\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | sort | uniq | tr '\n' ' ')
 
 COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
 
