@@ -20,6 +20,13 @@ DOCKER_IMAGE_NAME := $(DOCKER_REPO)/$(PROJECT_NAME)
 else
 DOCKER_IMAGE_NAME := $(PROJECT_NAME)
 endif
+ifeq ($(DOCKER_IMAGE_TAG),)
+__GIT_UNCOMMITTED_FILES := $(shell git status --porcelain | wc -l | bc)
+DOCKER_IMAGE_TAG := $(shell git rev-parse --short HEAD 2> /dev/null)
+ifneq "$(__GIT_UNCOMMITTED_FILES)" "0"
+DOCKER_IMAGE_TAG := $(DOCKER_IMAGE_TAG)$(DIRTY_SUFFIX)
+endif
+endif
 
 ## docker-build: Build the docker image with the tag
 ##               <PROJECT_NAME>:<DOCKER_IMAGE_TAG>, if DOCKER_IMAGE_TAG is not
@@ -28,11 +35,12 @@ endif
 ##               Set DOCKER_ENABLE_LATEST=true to tag the result image with
 ##               "latest".
 .PHONY: docker-build
-docker-build: | docker-generate-tag
-ifneq ($(__GIT_UNCOMMITTED_FILES),)
-	@echo "\033[33mThe repository contains local changes, this image should only be used for testing\033[0m";
+docker-build:
+ifneq "$(__GIT_UNCOMMITTED_FILES)" "0"
+	@echo "\033[33mThe repository contains local changes ($(__GIT_UNCOMMITTED_FILES) uncommitted files), this image should only be used for testing\033[0m";
 endif
 	@docker build --tag $(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG) --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
+	@echo "Image tag: "$(DOCKER_IMAGE_TAG)
 ifeq ($(DOCKER_ENABLE_LATEST), true)
 	@docker build --tag $(DOCKER_IMAGE_NAME):latest --file $(DOCKERFILE_PATH) $(DOCKER_PATH)
 endif
@@ -44,7 +52,7 @@ endif
 ##               This command WON'T delete any intermediate images, so those
 ##               should be manually removed.
 .PHONY: docker-clean
-docker-clean: | docker-generate-tag
+docker-clean:
 	@docker rmi $(PROJECT_NAME):$(DOCKER_IMAGE_TAG) || true
 
 ## docker-push: Push the docker image with the tag
@@ -53,7 +61,7 @@ docker-clean: | docker-generate-tag
 ##              Set DOCKER_ENABLE_LATEST=true to push the image with "latest"
 ##              tag as well.
 .PHONY: docker-push
-docker-push: | docker-generate-tag
+docker-push:
 ifeq ($(patsubst %$(DIRTY_SUFFIX),,$(lastword $(DOCKER_IMAGE_TAG))),)
 	$(error The image ${DOCKER_IMAGE_TAG} is only meant for local usage, unable to push it)
 endif
@@ -68,18 +76,5 @@ endif
 ##             repository contains uncommitted files. The container will be
 ##             automatically removed once stopped.
 .PHONY: docker-run
-docker-run: | docker-generate-tag docker-build
+docker-run: | docker-build
 	@docker run -it --rm $(PROJECT_NAME):$(DOCKER_IMAGE_TAG)
-
-.PHONY: docker-generate-tag
-docker-generate-tag:
-ifeq ($(DOCKER_IMAGE_TAG),)
-	@$(eval __GIT_UNCOMMITTED_FILES := $(shell git status -s))
-	@$(eval DOCKER_IMAGE_TAG := $(shell git rev-parse --short HEAD 2> /dev/null))
-
-	@if [ ! -z "$(__GIT_UNCOMMITTED_FILES)" ]; then \
-		echo "The repo has uncommitted files"; \
-		$(eval DOCKER_IMAGE_TAG := $(DOCKER_IMAGE_TAG)$(DIRTY_SUFFIX)) \
-	fi;
-	@echo "Image tag: "$(DOCKER_IMAGE_TAG)
-endif
