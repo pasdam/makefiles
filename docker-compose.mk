@@ -1,3 +1,4 @@
+COMPOSE_BUILD_DIR ?= .build/compose
 COMPOSE_DOWN_ARGS ?=
 COMPOSE_FILES ?= compose.yaml
 COMPOSE_LAST_MODIFIED_TAGS_YAML ?= compose.last-modified-tags.yaml
@@ -23,6 +24,7 @@ compose-clean:
 .PHONY: compose-down
 compose-down:
 	@docker compose $(COMPOSE_FILES_ARGS) down $(COMPOSE_DOWN_ARGS)
+	@rm $(COMPOSE_BUILD_DIR)/compose-up.mk.target
 
 ## compose-generate-config-tags: Generate a compose file with tags for each
 ##                               service, with the timestamp of the last
@@ -32,9 +34,7 @@ compose-down:
 compose-generate-config-tags: $(COMPOSE_LAST_MODIFIED_TAGS_YAML)
 
 ## compose-up: Start the docker compose environment
-.PHONY: compose-up
-compose-up: $(COMPOSE_LAST_MODIFIED_TAGS_YAML) $(COMPOSE_VOLUME_FILES) $(COMPOSE_UP_PREREQUISITES)
-	@docker compose $(COMPOSE_FILES_ARGS) -f $(COMPOSE_LAST_MODIFIED_TAGS_YAML) up $(COMPOSE_UP_ARGS)
+compose-up: $(COMPOSE_BUILD_DIR)/compose-up.mk.target
 
 # Internal targets
 # ================
@@ -59,3 +59,11 @@ $(COMPOSE_LAST_MODIFIED_TAGS_YAML): $(COMPOSE_FILES) $(COMPOSE_VOLUME_FILES)
 			output=$$(printf '%s' "$$output" | yq ".services.$$service.labels.\"com.pasdam.volumes-last-modified-timestamp\" |= $$lastModificationSeconds"); \
 		done; \
 		printf '%s' "$$output" > $@
+
+$(COMPOSE_BUILD_DIR)/compose-up.mk.target: $(COMPOSE_BUILD_DIR) $(COMPOSE_LAST_MODIFIED_TAGS_YAML) $(COMPOSE_VOLUME_FILES) $(COMPOSE_UP_PREREQUISITES)
+	@1>&2 echo "Compose - Running compose up because $? changed"
+	@docker compose $(COMPOSE_FILES_ARGS) -f $(COMPOSE_LAST_MODIFIED_TAGS_YAML) up $(COMPOSE_UP_ARGS)
+	@touch $@
+
+$(COMPOSE_BUILD_DIR):
+	@mkdir -p $@
