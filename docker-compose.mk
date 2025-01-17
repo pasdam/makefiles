@@ -9,6 +9,7 @@ COMPOSE_FILES_WITH_VOLUMES :? $(COMPOSE_FILES)
 COMPOSE_VOLUME_FILES ?= $(shell cat $(COMPOSE_FILES_WITH_VOLUMES) | grep -E '^\s+\- \./.*:ro$$' | sed -E 's| *\- \./||' | sed 's|:.*||' | sort | uniq | tr '\n' ' ')
 
 COMPOSE_FILES_ARGS := $(shell echo " $(COMPOSE_FILES)" | sed 's| | -f |g')
+COMPOSE_FILES_ARGS_DOWN := $(addprefix -f , $(shell echo " $(COMPOSE_FILES)" | (xargs ls -d 2>/dev/null)))
 
 ## compose-build: Build the docker images used in the compose files
 .PHONY: compose-build
@@ -23,8 +24,8 @@ compose-clean: compose-down
 ## compose-down: Stop the docker compose environment
 .PHONY: compose-down
 compose-down:
-	@docker compose $(COMPOSE_FILES_ARGS) down $(COMPOSE_DOWN_ARGS)
-	@rm -rf $(COMPOSE_BUILD_DIR)/compose-up.mk.target
+	@docker compose $(COMPOSE_FILES_ARGS_DOWN) down $(COMPOSE_DOWN_ARGS)
+	@rm -f $(COMPOSE_BUILD_DIR)/compose-up.mk.target
 
 ## compose-generate-config-tags: Generate a compose file with tags for each
 ##                               service, with the timestamp of the last
