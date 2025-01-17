@@ -17,7 +17,7 @@ compose-build: $(COMPOSE_BUILD_PREREQUISITES)
 
 ## compose-clean: Clean generated compose files
 .PHONY: compose-clean
-compose-clean:
+compose-clean: compose-down
 	@rm -f $(COMPOSE_LAST_MODIFIED_TAGS_YAML)
 
 ## compose-down: Stop the docker compose environment
