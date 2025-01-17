@@ -24,7 +24,7 @@ compose-clean:
 .PHONY: compose-down
 compose-down:
 	@docker compose $(COMPOSE_FILES_ARGS) down $(COMPOSE_DOWN_ARGS)
-	@rm $(COMPOSE_BUILD_DIR)/compose-up.mk.target
+	@rm -rf $(COMPOSE_BUILD_DIR)/compose-up.mk.target
 
 ## compose-generate-config-tags: Generate a compose file with tags for each
 ##                               service, with the timestamp of the last
