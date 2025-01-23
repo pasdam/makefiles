@@ -4,25 +4,26 @@
 # It expects the PROJECT_NAME variable to be defined, as it will be used as
 # name for the artifact.
 
+GO_MOD_DIR ?= .
 GO_MAIN_DIR ?= .
 
-## go-build: Build the app
+## go-build: Build the go app
 .PHONY: go-build
 go-build: | go-dep-clean go-dep-download
 	@go build -v -o $(BUILD_DIR)/$(PROJECT_NAME) $(GO_MAIN_DIR)
 
-## go-dep-clean: Remove unused dependencies
+## go-dep-clean: Remove unused go dependencies
 .PHONY: go-dep-clean
 go-dep-clean:
 	@go mod tidy
 
-## go-dep-download: Download all the dependencies
+## go-dep-download: Download all go dependencies
 .PHONY: go-dep-download
 go-dep-download: | go-dep-clean
 	@go mod download
 
-## go-dep-upgrade: Upgrade all the dependencies
+## go-dep-upgrade: Upgrade all go dependencies
 .PHONY: go-dep-upgrade
-go-dep-upgrade: | go-dep-clean
-	@go get -u ./...
-	@$(MAKE) go-dep-clean
+go-dep-upgrade:
+	@go get -C $(GO_MOD_DIR) -u ./...
+	@go mod -C $(GO_MOD_DIR) tidy
