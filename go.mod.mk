@@ -27,3 +27,8 @@ go-dep-download: | go-dep-clean
 go-dep-upgrade:
 	@go get -C $(GO_MOD_DIR) -u ./...
 	@go mod -C $(GO_MOD_DIR) tidy
+
+## go-test: Run unit tests
+.PHONY: go-test
+go-test:
+	@cd ${GO_MOD_DIR} && go test -gcflags=-l ./...

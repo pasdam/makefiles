@@ -40,11 +40,6 @@ go-lint: | __go-pkg-list
 go-run:
 	@go run ${GO_MAIN_DIR}
 
-## go-test: Run unit tests
-.PHONY: go-test
-go-test: | __go-pkg-list
-	@go test -gcflags=-l ${GO_PKG_LIST}
-
 __go-pkg-list:
 ifeq ($(origin GO_PKG_LIST), undefined)
 	$(eval GO_PKG_LIST ?= $(shell go list ./... | grep -v /vendor/))
