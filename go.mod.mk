@@ -4,8 +4,9 @@
 # It expects the PROJECT_NAME variable to be defined, as it will be used as
 # name for the artifact.
 
-GO_MOD_DIR ?= .
 GO_MAIN_DIR ?= .
+GO_MOD_DIR ?= .
+PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 
 ## go-build: Build the go app
 .PHONY: go-build
