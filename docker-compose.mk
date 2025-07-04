@@ -2,6 +2,7 @@ COMPOSE_BUILD_DIR ?= .build/compose
 COMPOSE_DOWN_ARGS ?=
 COMPOSE_FILES ?= compose.yaml
 COMPOSE_LAST_MODIFIED_TAGS_YAML ?= compose.last-modified-tags.yaml
+COMPOSE_LAST_MODIFIED_TAGS_PREREQUISITES ?=
 COMPOSE_UP_ARGS ?= -d
 COMPOSE_UP_PREREQUISITES ?=
 COMPOSE_BUILD_PREREQUISITES ?= $(COMPOSE_UP_PREREQUISITES)
@@ -40,7 +41,7 @@ compose-up: $(COMPOSE_BUILD_DIR)/compose-up.mk.target
 # Internal targets
 # ================
 
-$(COMPOSE_LAST_MODIFIED_TAGS_YAML): $(COMPOSE_FILES) $(COMPOSE_VOLUME_FILES)
+$(COMPOSE_LAST_MODIFIED_TAGS_YAML): $(COMPOSE_FILES) $(COMPOSE_VOLUME_FILES) $(COMPOSE_LAST_MODIFIED_TAGS_PREREQUISITES)
 	@1>&2 echo "Generating $@ because $? have changed"
 	@set -e; \
 		merged_compose=$$(yq eval-all '. as $$item ireduce ({}; . * $$item )' $(COMPOSE_FILES)); \
