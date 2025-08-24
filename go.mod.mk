@@ -7,6 +7,7 @@
 GO_MAIN_DIR ?= .
 GO_MOD_DIR ?= .
 PROJECT_NAME ?= $(shell basename $(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
+GO_TEST_SKIP_DIRECTORY ?=
 
 ## go-build: Build the go app
 .PHONY: go-build
@@ -32,4 +33,8 @@ go-dep-upgrade:
 ## go-test: Run unit tests
 .PHONY: go-test
 go-test:
+ifeq ($(GO_TEST_SKIP_DIRECTORY),)
 	@cd ${GO_MOD_DIR} && go test -gcflags=-l ./...
+else
+	@cd ${GO_MOD_DIR} && go test -gcflags=-l `go list ./... | grep -v $(GO_TEST_SKIP_DIRECTORY)`
+endif
